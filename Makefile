@@ -36,12 +36,15 @@ AR_OPTS=rcs
 
 
 # derived variables
-CPP_OBJS=$(CPP_FILES:.cpp=.o)
+BIN_DIR = bin
+CPP_OBJS=$(CPP_FILES:%.cpp=$(BIN_DIR)/%.o)
 GCC_PLUS_OPTS=-mmcu=$(MCU) $(CPP_OPTS) -B"$(AVR_BINUTILS_DIR)" -iquote .
 AR="$(AVR_BINUTILS_DIR)/avr-ar" $(AR_OPTS)
-GCC_PLUS="$(AVR_GCC_BIN_DIR)/avr-gcc" $(GCC_PLUS_OPTS)
-BUILT_PRODUCT=lib$(MODULE_NAME).a
+GCC_PLUS_BIN=$(AVR_GCC_BIN_DIR)/avr-gcc
+GCC_PLUS="$(GCC_PLUS_BIN)" $(GCC_PLUS_OPTS)
+BUILT_PRODUCT=$(BIN_DIR)/lib$(MODULE_NAME).a
 MODULE_NAME_DIR=$(UNSAFE_MODULES_INSTALL_DIR)/$(MODULE_NAME)
+IS_BIN_DIR_READONLY = $(shell test -d $(BIN_DIR) && (test -w $(BIN_DIR) || echo "READONLY"))
 
 BUILT_PRODUCT_INSTALL=$(BUILT_PRODUCT:=-install)
 COPIED_FILES_U_INSTALL=$(COPIED_FILES_U:=-install)
@@ -60,16 +63,31 @@ endef
 
 .PHONY: all clean install $(BUILT_PRODUCT_INSTALL) $(COPIED_FILES_U_INSTALL) $(COPIED_FILES_S_INSTALL)
 
+ifneq ($(wildcard $(GCC_PLUS_BIN)),)
 all: $(BUILT_PRODUCT)
+else
+$(info avr-gcc not found at $(GCC_PLUS_BIN), relying on pre-build binaries only)
+all:
+	echo "DONE"
+endif
 
-$(BUILT_PRODUCT): $(CPP_OBJS)
-	$(AR) -o $@ $^
+$(BIN_DIR):
+	mkdir -p $@
 
-%.o: %.cpp
-	$(GCC_PLUS) -I . -DF_CPU=16000000UL -c -o $@ $(@:.o=.cpp)
+ifeq ($(IS_BIN_DIR_READONLY),READONLY)
+$(info Cannot write to directory $(BIN_DIR), read only. Probably a binary distribution, skipping build.)
+$(BUILT_PRODUCT):
+	echo "DONE"
+else
+$(BUILT_PRODUCT): $(BIN_DIR) $(CPP_OBJS)
+	$(AR) -o $@ $(CPP_OBJS)
+endif
+
+$(BIN_DIR)/%.o: %.cpp
+	$(GCC_PLUS) -I . -DF_CPU=16000000UL -c -o $@ $<
 
 clean:
-	rm -rf *.o *.a
+	rm -rf *.o *.a $(BIN_DIR)
 
 # install section
 
