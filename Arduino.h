@@ -1,3 +1,6 @@
+#ifndef Arduino_h
+#define Arduino_h
+
 #define ARDUINO_SHIM_DEFINED (unsigned char)1
 
 #define ARDUINO 100
@@ -57,5 +60,7 @@ typedef unsigned int word;
 typedef bool boolean;
 typedef uint8_t byte;
 
+
+#endif
 
 #endif
