@@ -50,15 +50,6 @@ BUILT_PRODUCT_INSTALL=$(BUILT_PRODUCT:=-install)
 COPIED_FILES_U_INSTALL=$(COPIED_FILES_U:=-install)
 COPIED_FILES_S_INSTALL=$(COPIED_FILES_S:=-install)
 
-# subroutine
-
-define includeFileReference
-		if ! grep -s $(1) $(2); then \
-		  echo "\n$(1)\c" >> $(2); \
-		fi
-endef
-
-
 #targets
 
 .PHONY: all clean install $(BUILT_PRODUCT_INSTALL) $(COPIED_FILES_U_INSTALL) $(COPIED_FILES_S_INSTALL)
@@ -66,7 +57,7 @@ endef
 ifneq ($(wildcard $(GCC_PLUS_BIN)),)
 all: $(BUILT_PRODUCT)
 else
-$(info avr-gcc not found at $(GCC_PLUS_BIN), relying on pre-build binaries only)
+$(info avr-gcc not found at $(GCC_PLUS_BIN), relying on pre-built binaries only)
 all:
 	echo "DONE"
 endif
@@ -88,25 +79,3 @@ $(BIN_DIR)/%.o: %.cpp
 
 clean:
 	rm -rf *.o *.a $(BIN_DIR)
-
-# install section
-
-$(CATALOG_FILE):
-	if [ ! -e "$@" ]; then cp $(LEGACY_CATALOG_FILE) "$@";fi
-
-$(MODULE_NAME_DIR):
-	if [ ! -d "$@" ]; then mkdir -p "$@";fi
-
-$(BUILT_PRODUCT_INSTALL): $(BUILT_PRODUCT) $(MODULE_NAME_DIR) $(CATALOG_FILE)
-	cp -a $(@:-install=) $(UNSAFE_MODULES_INSTALL_DIR)/$(MODULE_NAME)/
-	$(call includeFileReference,unsafe_modules/$(MODULE_NAME)/$(@:-install=),$(CATALOG_FILE))
-
-$(COPIED_FILES_U_INSTALL): $(COPIED_FILES_U) $(MODULE_NAME_DIR) $(CATALOG_FILE)
-	cp -a $(@:-install=) $(UNSAFE_MODULES_INSTALL_DIR)/$(MODULE_NAME)/
-	$(call includeFileReference,unsafe_modules/$(MODULE_NAME)/$(@:-install=),$(CATALOG_FILE))
-
-$(COPIED_FILES_S_INSTALL): $(COPIED_FILES_S) $(CATALOG_FILE)
-	cp -a $(@:-install=) $(SAFE_FILES_INSTALL_DIR)/
-	$(call includeFileReference,$(@:-install=),$(CATALOG_FILE))
-
-install: $(BUILT_PRODUCT_INSTALL) $(COPIED_FILES_U_INSTALL) $(COPIED_FILES_S_INSTALL)
