@@ -61,4 +61,7 @@ class AdapterSerial : public Stream
 
 extern AdapterSerial Serial;
 
+// Use this adapter as a drop in dummy replacement for the hardware serial class.
+typedef AdapterSerial HardwareSerial;
+
 #endif
