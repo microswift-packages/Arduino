@@ -31,7 +31,7 @@
 
 #ifdef AVR_LIBC_DEFINED
 // #include <util/crc16.h>
-#include <avr/interrupts.h>
+#include <avr/interrupt.h>
 #endif
 
 #define min(a,b) ((a)<(b)?(a):(b))
