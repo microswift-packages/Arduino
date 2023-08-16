@@ -100,6 +100,8 @@ extern "C" {
 	void _setDDRD(unsigned char value);
 
 	//USART
+	void _setupSerial(unsigned long baudRate);
+	// simple byte send
 	void _sendByte(unsigned char byte);
 	// send a hard coded string from the PROGMEM (does not use RAM)
 	void _sendString(unsigned short maxMsgLen, const char * __nonnull message, _Bool addNewline); // must be NULL terminated

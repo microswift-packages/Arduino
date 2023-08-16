@@ -1,6 +1,6 @@
 # outputs
 COPIED_FILES_U=module.modulemap Arduino.h SimpleDebugPrinter.h DebugPrinter.h Print.h Stream.h shims.h AdapterSerial.h\
-Wire.h binary.h WString.h SoftwareSerial.h
+Wire.h binary.h WString.h SoftwareSerial.h HardwareSerial.h
 
 # these seem to crash programs
 # IPAddress.h Printable.h
@@ -22,8 +22,8 @@ LEGACY_CATALOG_FILE=../../contributed\ libraries/catalog.txt
 
 
 # source files and settings
-CPP_FILES=Stream.cpp Print.cpp abi.cpp SimpleDebugPrinter.cpp AdapterSerial.cpp\
-Wire.cpp WString.cpp WMath.cpp SoftwareSerial.cpp
+CPP_FILES=Stream.cpp Print.cpp abi.cpp SimpleDebugPrinter.cpp AdapterSerial.cpp \
+Wire.cpp WString.cpp WMath.cpp SoftwareSerial.cpp HardwareSerial.cpp
 
 #  IPAddress.cpp
 
