@@ -23,7 +23,7 @@ LEGACY_CATALOG_FILE=../../contributed\ libraries/catalog.txt
 
 # source files and settings
 CPP_FILES=Stream.cpp Print.cpp abi.cpp SimpleDebugPrinter.cpp AdapterSerial.cpp\
-Wire.cpp WString.cpp
+Wire.cpp WString.cpp WMath.cpp
 
 #  IPAddress.cpp
 
