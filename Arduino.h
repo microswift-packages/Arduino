@@ -23,7 +23,16 @@
 // #include "Client.h"
 // #include "Server.h"
 
+#ifdef LIBC_DEFINED
+// #include <math.h>
+// #include <time.h>
+#include <stdint.h>
+#endif
+
+#ifdef AVR_LIBC_DEFINED
+// #include <util/crc16.h>
 #include <avr/interrupts.h>
+#endif
 
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
