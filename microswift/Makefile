@@ -12,7 +12,16 @@ MODULE_NAME=Arduino
 # program location and settings
 # reasonable defaults, change to suit your build
 AVR_BINUTILS_DIR=/usr/local/bin
-AVR_GCC_BIN_DIR=/usr/local/bin
+
+# try different versions of AVR GCC
+AVR_GCC_BIN_DIR := /usr/local/bin
+ifeq ($(wildcard $(AVR_GCC_BIN_DIR)/avr-gcc),)
+AVR_GCC_BIN_DIR := /opt/homebrew/bin
+ifeq ($(wildcard $(AVR_GCC_BIN_DIR)/avr-gcc),)
+$(error avr-gcc not found in the usual locations for homebrew, please check install. AVR GCC is required to build this package.)
+endif
+endif
+
 # this relies on the current S4A Community folder
 # structure so it could very easily break in future
 UNSAFE_MODULES_INSTALL_DIR=../../contributed\ libraries/unsafe_modules
@@ -57,7 +66,7 @@ COPIED_FILES_S_INSTALL=$(COPIED_FILES_S:=-install)
 ifneq ($(wildcard $(GCC_PLUS_BIN)),)
 all: $(BUILT_PRODUCT)
 else
-$(info avr-gcc not found at $(GCC_PLUS_BIN), relying on pre-built binaries only)
+$(error avr-gcc not found at $(GCC_PLUS_BIN))
 all:
 	echo "DONE"
 endif
