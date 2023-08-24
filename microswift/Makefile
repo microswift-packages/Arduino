@@ -9,14 +9,13 @@ Wire.h binary.h WString.h SoftwareSerial.h
 COPIED_FILES_S=Arduino.swift
 MODULE_NAME=Arduino
 
-# program location and settings
-# reasonable defaults, change to suit your build
-AVR_BINUTILS_DIR=/usr/local/bin
-
 # try different versions of AVR GCC
 AVR_GCC_BIN_DIR := /usr/local/bin
+AVR_BINUTILS_DIR := /usr/local/bin
+
 ifeq ($(wildcard $(AVR_GCC_BIN_DIR)/avr-gcc),)
 AVR_GCC_BIN_DIR := /opt/homebrew/bin
+AVR_BINUTILS_DIR := /opt/homebrew/bin # Binutils is probably in the same location as avr-gcc, if installed.
 ifeq ($(wildcard $(AVR_GCC_BIN_DIR)/avr-gcc),)
 $(error avr-gcc not found in the usual locations for homebrew, please check install. AVR GCC is required to build this package.)
 endif
@@ -47,7 +46,7 @@ AR_OPTS=rcs
 # derived variables
 BIN_DIR = bin
 CPP_OBJS=$(CPP_FILES:%.cpp=$(BIN_DIR)/%.o)
-GCC_PLUS_OPTS=-mmcu=$(MCU) $(CPP_OPTS) -B"$(AVR_BINUTILS_DIR)" -iquote .
+GCC_PLUS_OPTS=-mmcu=$(MCU) $(CPP_OPTS) -iquote .
 AR="$(AVR_BINUTILS_DIR)/avr-ar" $(AR_OPTS)
 GCC_PLUS_BIN=$(AVR_GCC_BIN_DIR)/avr-gcc
 GCC_PLUS="$(GCC_PLUS_BIN)" $(GCC_PLUS_OPTS)
