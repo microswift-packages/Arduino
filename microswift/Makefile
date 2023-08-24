@@ -17,7 +17,7 @@ ifeq ($(wildcard $(AVR_GCC_BIN_DIR)/avr-gcc),)
 AVR_GCC_BIN_DIR := /opt/homebrew/bin
 AVR_BINUTILS_DIR := /opt/homebrew/bin
 ifeq ($(wildcard $(AVR_GCC_BIN_DIR)/avr-gcc),)
-$(error avr-gcc not found in the usual locations for homebrew, please check install. AVR GCC is required to build this package.)
+$(error avr-gcc not found. AVR GCC is required to build this package.)
 endif
 endif
 
@@ -42,7 +42,6 @@ MCU=atmega328p
 CPP_OPTS=-std=c++11 -ffunction-sections -Os
 AR_OPTS=rcs
 
-
 # derived variables
 BIN_DIR = bin
 CPP_OBJS=$(CPP_FILES:%.cpp=$(BIN_DIR)/%.o)
@@ -52,7 +51,6 @@ GCC_PLUS_BIN=$(AVR_GCC_BIN_DIR)/avr-gcc
 GCC_PLUS="$(GCC_PLUS_BIN)" $(GCC_PLUS_OPTS)
 BUILT_PRODUCT=$(BIN_DIR)/lib$(MODULE_NAME).a
 MODULE_NAME_DIR=$(UNSAFE_MODULES_INSTALL_DIR)/$(MODULE_NAME)
-IS_BIN_DIR_READONLY = $(shell test -d $(BUILT_PRODUCT) && (test -w $(BUILT_PRODUCT) || echo "READONLY"))
 
 BUILT_PRODUCT_INSTALL=$(BUILT_PRODUCT:=-install)
 COPIED_FILES_U_INSTALL=$(COPIED_FILES_U:=-install)
@@ -62,25 +60,13 @@ COPIED_FILES_S_INSTALL=$(COPIED_FILES_S:=-install)
 
 .PHONY: all clean install $(BUILT_PRODUCT_INSTALL) $(COPIED_FILES_U_INSTALL) $(COPIED_FILES_S_INSTALL)
 
-ifneq ($(wildcard $(GCC_PLUS_BIN)),)
 all: $(BUILT_PRODUCT)
-else
-$(error avr-gcc not found at $(GCC_PLUS_BIN))
-all:
-	echo "DONE"
-endif
 
 $(BIN_DIR):
 	mkdir -p $@
 
-ifeq ($(IS_BIN_DIR_READONLY),READONLY)
-$(info Cannot write to directory $(BIN_DIR), read only. Probably a binary distribution, skipping build.)
-$(BUILT_PRODUCT):
-	echo "DONE"
-else
 $(BUILT_PRODUCT): $(BIN_DIR) $(CPP_OBJS)
 	$(AR) -o $@ $(CPP_OBJS)
-endif
 
 $(BIN_DIR)/%.o: %.cpp
 	$(GCC_PLUS) -I . -DF_CPU=16000000UL -c -o $@ $<
